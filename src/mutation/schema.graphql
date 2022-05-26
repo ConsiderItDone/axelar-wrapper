@@ -1,13 +1,37 @@
 #import { Mutation, Connection } into Ethereum from "w3://ens/ethereum.web3api.eth"
 
 type Mutation {
-  setData(
-    address: String!
-    value: UInt32!
-    connection: Ethereum_Connection
-  ): String!
+  approve(
+    spender: String!
+    amount: BigInt!
+  ): Boolean!
 
-  deployContract(
-    connection: Ethereum_Connection
-  ): String!
+  sendToken(
+    destinationChain: String!
+    destinationAddress: String!
+    symbol: String!
+    amount: BigInt!
+  ) : String!
+}
+
+type MutationEnv {
+  chainId: Int!
+}
+
+enum ChainId {
+  MAINNET
+  ROPSTEN
+}
+
+enum EVM_Chains {
+  ETHEREUM,
+  ETHEREUM_ROPSTEN,
+  AVALANCHE,
+  AVALANCHE_FUJI,
+  POLYGON,
+  POLYGON_MUMBAI,
+  FANTOM,
+  FANTOM_TESTNET,
+  MOONBEAM,
+  MOONBEAM_ALPHA
 }

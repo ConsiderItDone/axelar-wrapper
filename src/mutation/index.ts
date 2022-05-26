@@ -1,26 +1,47 @@
+import { getGatewayContractAddress } from "../utils/contractAddress";
 import {
   Ethereum_Mutation,
-  Input_setData,
-  Input_deployContract
+  Input_sendToken,
+  Input_approve,
+  requireEnv,
 } from "./w3";
-import { abi, bytecode } from "../contracts/SimpleStorage";
 
-export function setData(input: Input_setData): string {
+export function sendToken(input: Input_sendToken): string {
+  const env = requireEnv();
+  const chainId = env.chainId;
+
+  const contractAddress = getGatewayContractAddress(chainId);
+
   const res = Ethereum_Mutation.callContractMethod({
-    address: input.address,
-    method: "function set(uint256 value)",
-    args: [input.value.toString()],
-    connection: input.connection
+    address: contractAddress,
+    method:
+      "function sendToken(string destinationChain, string destinationAddress, string symbol, uint256 amount)", //"function sendToken(string memory destinationChain, string memory destinationAddress, string memory symbol, uint256 amount)"
+    args: [
+      input.destinationChain,
+      input.destinationAddress,
+      input.symbol,
+      input.amount.toString(),
+    ],
+    connection: null,
+    txOverrides: null,
   }).unwrap();
 
-  return res.hash;
+  return res.data;
 }
 
-export function deployContract(input: Input_deployContract): string {
-  return Ethereum_Mutation.deployContract({
-    abi,
-    bytecode,
-    args: null,
-    connection: input.connection
-  }).unwrap();
+export function approve(input: Input_approve): boolean {
+  const env = requireEnv();
+  const chainId = env.chainId;
+
+  const contractAddress = getGatewayContractAddress(chainId);
+
+  const res = Ethereum_Mutation.callContractMethod({
+    address: contractAddress,
+    method: "function approve(address spender, uint256 amount)",
+    args: [input.spender, input.amount.toString()],
+    connection: null,
+    txOverrides: null,
+  });
+
+  return res.isOk;
 }

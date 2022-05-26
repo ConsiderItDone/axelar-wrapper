@@ -1,8 +1,16 @@
 #import { Query, Connection } into Ethereum from "w3://ens/ethereum.web3api.eth"
+#import { Query, Request, Response } into HTTP from "w3://ens/http.web3api.eth"
 
 type Query {
-  getData(
-    address: String!
-    connection: Ethereum_Connection
-  ): Int!
+  getDepositAddress(
+    fromChain: String! # source chain
+    toChain: String! # destination chain
+    destinationAddress: String! # destination address to transfer the token to
+    asset: String! # common key of the asset
+    options: Options
+  ): String
+}
+
+type Options {
+  _traceId: String!
 }
