@@ -8,7 +8,7 @@ type Query {
     destinationAddress: String! # destination address to transfer the token to
     asset: String! # common key of the asset
     options: Options
-  ): String
+  ): String!
 }
 
 type Options {
