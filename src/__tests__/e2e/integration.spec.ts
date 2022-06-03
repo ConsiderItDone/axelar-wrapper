@@ -1,112 +1,65 @@
-import { Web3ApiClient } from "@web3api/client-js";
-import {
-  buildAndDeployApi,
-  initTestEnvironment,
-  stopTestEnvironment,
-} from "@web3api/test-env-js";
-import * as App from "../types/w3";
+import { createWeb3ApiClient, Web3ApiClient } from "@web3api/client-js";
+import { initTestEnvironment, buildAndDeployApi } from "@web3api/test-env-js";
 import path from "path";
 
-import { getPlugins } from "../utils";
+const axelar = require("@axelar-network/axelar-local-dev");
 
-jest.setTimeout(500000);
+jest.setTimeout(360000);
 
-describe("SimpleStorage", () => {
-  const CONNECTION = { node: "http://localhost:8545" };
-
+describe("e2e", () => {
+  let apiUri: string;
+  let chain1: any;
+  let chain2: any;
   let client: Web3ApiClient;
-  let ensUri: string;
 
   beforeAll(async () => {
-    const {
-      ethereum: testEnvEtherem,
-      ensAddress,
-      registrarAddress,
-      resolverAddress,
-      ipfs,
-    } = await initTestEnvironment();
-    // deploy api
-    const apiPath: string = path.join(
-      path.resolve(__dirname),
-      "..",
-      "..",
-      ".."
-    );
+    const { ensAddress, ipfs, ethereum } = await initTestEnvironment();
+    const apiPath: string = path.resolve(__dirname + "/../../");
+    const api = await buildAndDeployApi(apiPath, ipfs, ensAddress);
 
-    // get client
-    const config = getPlugins(testEnvEtherem, ipfs, ensAddress);
-    client = new Web3ApiClient(config);
+    apiUri = `ens/testnet/${api.ensDomain}`;
 
-    const api = await buildAndDeployApi({
-      apiAbsPath: apiPath,
-      ipfsProvider: ipfs,
-      ensRegistryAddress: ensAddress,
-      ensRegistrarAddress: registrarAddress,
-      ensResolverAddress: resolverAddress,
-      ethereumProvider: testEnvEtherem,
+    chain1 = await axelar.createNetwork();
+    chain2 = await axelar.createNetwork();
+
+    client = await createWeb3ApiClient({
+      ens: ensAddress,
+      ipfs: ipfs,
+      ethereum: ethereum,
     });
-    
-    ensUri = `ens/testnet/${api.ensDomain}`;
   });
 
-  afterAll(async () => {
-    await stopTestEnvironment();
-  });
+  it("Send transaction", async () => {
+    const [user1] = chain1.userWallets;
+    const [user2] = chain2.userWallets;
+    await chain1.giveToken(user1.address, "aUSDC", 1000); // @Yulia change it to client.query({uri:..., query:...})
 
-  const getData = async (contractAddr: string): Promise<number> => {
-    const response = await App.SimpleStorage_Query.getData(
-      {
-        address: contractAddr,
-        connection: CONNECTION,
-      },
-      client,
-      ensUri
+    console.log(
+      `user1 has ${await chain1.usdc.balanceOf(user1.address)} aUSDC.`
+    );
+    console.log(
+      `user2 has ${await chain2.usdc.balanceOf(user2.address)} aUSDC.`
     );
 
-    expect(response).toBeTruthy();
-    expect(response.error).toBeFalsy();
-    expect(response.data).not.toBeNull();
+    // Approve the AxelarGateway to use our aUSDC on chain1.
+    await (
+      await chain1.usdc.connect(user1).approve(chain1.gateway.address, 100)
+    ).wait();
+    // And have it send it to chain2.
+    await (
+      await chain1.gateway
+        .connect(user1)
+        .sendToken(chain2.name, user2.address, "aUSDC", 100)
+    ).wait();
 
-    return response.data as number;
-  }
+    // Have axelar relay the tranfer to chain2.
+    await axelar.relay(); // @Yulia Leave it at the 
 
-  const setData = async (contractAddr: string, value: number): Promise<string> => {
-    const response = await App.SimpleStorage_Mutation.setData(
-      {
-        address: contractAddr,
-        connection: CONNECTION,
-        value: value,
-      },
-      client,
-      ensUri
+    console.log(
+      `user1 has ${await chain1.usdc.balanceOf(user1.address)} aUSDC.`
     );
-
-    expect(response).toBeTruthy();
-    expect(response.error).toBeFalsy();
-    expect(response.data).not.toBeNull();
-
-    return response.data as string;
-  }
-
-  test("sanity", async () => {
-    // Deploy contract
-    const deployContractResponse = await App.SimpleStorage_Mutation.deployContract({connection: CONNECTION}, client, ensUri);
-    expect(deployContractResponse).toBeTruthy();
-    expect(deployContractResponse.error).toBeFalsy();
-    expect(deployContractResponse.data).toBeTruthy();
-
-    const contractAddress = deployContractResponse.data as string;
-
-    // Get data
-    let data = await getData(contractAddress);
-    expect(data).toBe(0);
-
-    // Set data
-    const tx = await setData(contractAddress, 10);
-    expect(tx).toBeTruthy();
-
-    // Get data
-    data = await getData(contractAddress);
-    expect(data).toBe(10);
+    console.log(
+      `user2 has ${await chain2.usdc.balanceOf(user2.address)} aUSDC.`
+    );
   });
 });

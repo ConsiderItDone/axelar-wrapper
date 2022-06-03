@@ -1,6 +1,13 @@
 #import { Mutation, Connection } into Ethereum from "w3://ens/ethereum.web3api.eth"
 
 type Mutation {
+  approveAndSendToken(
+    destinationChain: String!
+    destinationAddress: String!
+    symbol: String!
+    amount: BigInt!
+  ): String!
+
   approve(
     spender: String!
     amount: BigInt!

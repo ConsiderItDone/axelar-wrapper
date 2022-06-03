@@ -1,5 +1,5 @@
 import { randomUUID } from "crypto";
-import { HTTP_Header } from "../query/w3";
+import { HTTP_Header } from "../src/query/w3";
 import { AssetTransferObject } from "./types";
 
 export function getHeaders(payload: AssetTransferObject): HTTP_Header[] {

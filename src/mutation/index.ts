@@ -4,7 +4,25 @@ import {
   Input_sendToken,
   Input_approve,
   requireEnv,
+  Input_approveAndSendToken,
 } from "./w3";
+
+export function approveAndSendToken(input: Input_approveAndSendToken): string {
+  const approved = approve({
+    spender: input.destinationAddress,
+    amount: input.amount,
+  });
+  if (!approved) {
+    throw Error("Not approved");
+  }
+
+  return sendToken({
+    destinationChain: input.destinationChain,
+    destinationAddress: input.destinationAddress,
+    symbol: input.symbol,
+    amount: input.amount,
+  });
+}
 
 export function sendToken(input: Input_sendToken): string {
   const env = requireEnv();

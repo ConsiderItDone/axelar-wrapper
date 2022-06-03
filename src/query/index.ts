@@ -1,14 +1,17 @@
-import { stringify } from "@web3api/serial-as-json";
+/* import { stringify } from "@web3api/serial-as-json";
 import { getParameters } from "../utils/getParameters";
-import { getHeaders } from "../utils/getHeaders";
-import { Input_getDepositAddress, HTTP_Query, HTTP_ResponseType } from "./w3";
+import { getHeaders } from "../utils/getHeaders"; */
+import {
+  Input_getDepositAddress /* ,HTTP_Query, HTTP_ResponseType  */,
+} from "./w3";
 
 // https://github.com/axelarnetwork/axelarjs-sdk/blob/main/README.md#security-mesures
 export function getDepositAddress(
   input: Input_getDepositAddress
 ): String | null {
+  /*
   const CLIENT_API_POST_TRANSFER_ASSET = "/transferAssets";
-
+ 
   const payload = getParameters(
     input.destinationAddress,
     input.fromChain,
@@ -31,7 +34,7 @@ export function getDepositAddress(
     if (response.body != null) {
       return response.body;
     }
-  }
+  } */
 
   return null;
 }
