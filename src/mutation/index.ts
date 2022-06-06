@@ -3,7 +3,6 @@ import {
   Ethereum_Mutation,
   Input_sendToken,
   Input_approve,
-  requireEnv,
   Input_approveAndSendToken,
 } from "./w3";
 
@@ -25,8 +24,8 @@ export function approveAndSendToken(input: Input_approveAndSendToken): string {
 }
 
 export function sendToken(input: Input_sendToken): string {
-  const env = requireEnv();
-  const chainId = env.chainId;
+  // ?
+  const chainId = 1; 
 
   const contractAddress = getGatewayContractAddress(chainId);
 
@@ -48,8 +47,8 @@ export function sendToken(input: Input_sendToken): string {
 }
 
 export function approve(input: Input_approve): boolean {
-  const env = requireEnv();
-  const chainId = env.chainId;
+  // ?
+  const chainId = 1;
 
   const contractAddress = getGatewayContractAddress(chainId);
 

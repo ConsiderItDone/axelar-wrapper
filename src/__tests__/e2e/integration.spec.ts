@@ -1,4 +1,4 @@
-import { createWeb3ApiClient, Web3ApiClient } from "@web3api/client-js";
+import { createWeb3ApiClient, Web3ApiClient, ClientConfig } from "@web3api/client-js";
 import { initTestEnvironment, buildAndDeployApi } from "@web3api/test-env-js";
 import path from "path";
 import { getPlugins } from "../utils";
@@ -14,24 +14,17 @@ describe("e2e", () => {
   let client: Web3ApiClient;
 
   beforeAll(async () => {
-    const { ensAddress, ipfs, ethereum, registrarAddress, resolverAddress } =
+    const { ensAddress, ipfs, ethereum } =
       await initTestEnvironment();
     const apiPath: string = path.resolve(__dirname + "/../../");
-    const api = await buildAndDeployApi({
-      apiAbsPath: apiPath,
-      ethereumProvider: ethereum,
-      ipfsProvider: ipfs,
-      ensResolverAddress: resolverAddress,
-      ensRegistrarAddress: registrarAddress,
-      ensRegistryAddress: ensAddress,
-    });
+    const api = await buildAndDeployApi( apiPath, ipfs, ensAddress,);
 
     apiUri = `ens/testnet/${api.ensDomain}`;
 
     chain1 = await axelar.createNetwork();
     chain2 = await axelar.createNetwork();
 
-    const config = getPlugins(ethereum, ipfs, ensAddress);
+    const config : any = getPlugins(ethereum, ipfs, ensAddress);
     client = await createWeb3ApiClient(config);
   });
 
