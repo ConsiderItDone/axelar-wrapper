@@ -1,4 +1,4 @@
-import { createWeb3ApiClient, Web3ApiClient } from "@web3api/client-js";
+import { Web3ApiClient } from "@web3api/client-js";
 import { initTestEnvironment, buildAndDeployApi } from "@web3api/test-env-js";
 import path from "path";
 import { getPlugins } from "../utils";
@@ -16,7 +16,12 @@ describe("e2e", () => {
   beforeAll(async () => {
     const { ensAddress, ipfs, ethereum, registrarAddress, resolverAddress } =
       await initTestEnvironment();
-    const apiPath: string = path.resolve(__dirname + "/../../");
+    const apiPath: string = path.join(
+      path.resolve(__dirname),
+      "..",
+      "..",
+      ".."
+    );
     const api = await buildAndDeployApi({
       apiAbsPath: apiPath,
       ethereumProvider: ethereum,
@@ -32,10 +37,12 @@ describe("e2e", () => {
     chain2 = await axelar.createNetwork();
 
     const config = getPlugins(ethereum, ipfs, ensAddress);
-    client = await createWeb3ApiClient(config);
+    client = new Web3ApiClient(config);
   });
 
   it("Send transaction", async () => {
+    console.log("apiUri", apiUri);
+    client.getPlugins();
     const [user1] = chain1.userWallets;
     const [user2] = chain2.userWallets;
     await chain1.giveToken(user1.address, "aUSDC", 1000); // @Yulia change it to client.query({uri:..., query:...})
@@ -59,7 +66,9 @@ describe("e2e", () => {
     ).wait();
 
     // Have axelar relay the tranfer to chain2.
-    await axelar.relay(); // @Yulia Leave it at the
+    await axelar.relay(); // @Yulia Leave it at the end
+
+    
 
     console.log(
       `user1 has ${await chain1.usdc.balanceOf(user1.address)} aUSDC.`

@@ -5,12 +5,6 @@ import { ipfsPlugin } from "@web3api/ipfs-plugin-js";
 /* import axios from "axios";
 import path from "path";
  */
-interface TestEnvironment {
-  ipfs: string;
-  ethereum: string;
-  ensAddress: string;
-  clientConfig: Partial<ClientConfig>;
-}
 
 export function getPlugins(
   ethereum: string,
@@ -30,6 +24,7 @@ export function getPlugins(
       },
       {
         uri: "w3://ens/ethereum.web3api.eth",
+        //@ts-ignore
         plugin: ethereumPlugin({
           networks: {
             testnet: {
