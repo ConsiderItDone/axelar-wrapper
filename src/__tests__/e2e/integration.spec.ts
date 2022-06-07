@@ -68,6 +68,16 @@ describe("e2e", () => {
         symbol: "",
         amount: BigInt.fromString("0"),
       },
+      config: {
+        envs: [
+          {
+            uri: apiUri,
+            common: {
+              chainId: chain1, // //@Yulia find chainId in chain1
+            },
+          },
+        ],
+      },
     });
 
     expect(result.data).toBeTruthy();
