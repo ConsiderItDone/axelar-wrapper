@@ -57,7 +57,10 @@ export function approve(input: Input_approve): boolean {
     address: contractAddress,
     method: "function approve(address spender, uint256 amount)",
     args: [input.spender, input.amount.toString()],
-    connection: null,
+    connection: {
+      networkNameOrChainId: chainId,
+      node: null,
+    },
     txOverrides: null,
   });
 
