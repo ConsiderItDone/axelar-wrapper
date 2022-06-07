@@ -63,7 +63,7 @@ describe("e2e", () => {
         )
       }`,
       variables: {
-        destinationChain: user1.address,//@Yulia chain comes from chain2
+        destinationChain: chain2.name,//@Yulia chain comes from chain2
         destinationAddress: user2.address, // user2
         symbol: "",
         amount: new BN("0"),
