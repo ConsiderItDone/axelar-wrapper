@@ -2,9 +2,10 @@ import { Web3ApiClient } from "@web3api/client-js";
 import { initTestEnvironment, buildAndDeployApi } from "@web3api/test-env-js";
 import path from "path";
 import { getPlugins } from "../utils";
-import { BigInt } from "@web3api/wasm-as";
+import BN from "bn.js";
 const axelar = require("@axelar-network/axelar-local-dev");
 
+ 
 jest.setTimeout(360000);
 
 describe("e2e", () => {
@@ -32,10 +33,9 @@ describe("e2e", () => {
     });
 
     apiUri = `ens/testnet/${api.ensDomain}`;
-
+    
     chain1 = await axelar.createNetwork();
     chain2 = await axelar.createNetwork();
-
     const config = getPlugins(ethereum, ipfs, ensAddress);
     client = new Web3ApiClient(config);
   });
@@ -50,11 +50,11 @@ describe("e2e", () => {
 
     console.log(`user1 has ${balanceBefore} aUSDC BEFORE.`);
     console.log(`user2 has ${balanceBefore2} aUSDC BEFORE.`);
-
+   
     const result = await client.query<{ approveAndSendToken: any }>({
       uri: apiUri,
       query: `
-      mutatuion {
+      mutation {
         approveAndSendToken(
           destinationChain: $destinationChain
           destinationAddress: $destinationAddress
@@ -63,10 +63,10 @@ describe("e2e", () => {
         )
       }`,
       variables: {
-        destinationChain: "", //@Yulia chain comes from chain2
-        destinationAddress: "", // user2
+        destinationChain: user1.address,//@Yulia chain comes from chain2
+        destinationAddress: user2.address, // user2
         symbol: "",
-        amount: BigInt.fromString("0"),
+        amount: new BN("0"),
       },
       config: {
         envs: [
@@ -79,11 +79,14 @@ describe("e2e", () => {
         ],
       },
     });
-
+    console.log('result', result);
+  
     expect(result.data).toBeTruthy();
+    console.log(JSON.stringify(result.errors));
+    
     expect(result.errors).toBeFalsy();
 
-    const sendTokenResult = result.data?.approveAndSendToken;
+    // const sendTokenResult = result.data?.approveAndSendToken;
 
     // @Yulia change it to client.query({uri:..., query:...})
 

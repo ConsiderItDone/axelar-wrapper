@@ -43,7 +43,6 @@ export function sendToken(input: Input_sendToken): string {
     connection: null,
     txOverrides: null,
   }).unwrap();
-
   return res.data;
 }
 
@@ -58,7 +57,7 @@ export function approve(input: Input_approve): boolean {
     method: "function approve(address spender, uint256 amount)",
     args: [input.spender, input.amount.toString()],
     connection: {
-      networkNameOrChainId: chainId,
+      networkNameOrChainId: chainId.toString(),
       node: null,
     },
     txOverrides: null,
