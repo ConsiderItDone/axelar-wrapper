@@ -1,16 +1,43 @@
+import { Network } from "@axelar-network/axelar-local-dev/src/Network";
 import { ClientConfig } from "@web3api/client-js";
 import { ensPlugin } from "@web3api/ens-plugin-js";
 import { ethereumPlugin } from "@web3api/ethereum-plugin-js";
 import { ipfsPlugin } from "@web3api/ipfs-plugin-js";
+import { Wallet, ethers } from "ethers";
+
 /* import axios from "axios";
 import path from "path";
  */
 
+interface ChainUser {
+  chain: Network;
+  user: Wallet;
+}
 export function getPlugins(
   ethereum: string,
   ipfs: string,
-  ensAddress: string
+  ensAddress: string,
+  axelarChains?: ChainUser[]
 ): Partial<ClientConfig> {
+  const customChains = {};
+  if (axelarChains?.length) {
+    axelarChains.forEach((chain) => {
+      //@ts-ignore
+      customChains[chain.chain.chainId.toString()] = {
+        provider: chain.chain.provider,
+        signer: chain.user,
+      };
+    });
+  }
+
+  const privateKey =
+    "8ca435f1321b8043d984d95776cf53f570f2e296f86a8b0c9ddbd7c537cee6a2";
+  const ropstenUri =
+    "https://ropsten.infura.io/v3/9aa3d95b3bc440fa88ea12eaa4456161";
+
+  const wallet = new Wallet(
+    privateKey,
+  );
   return {
     redirects: [],
     plugins: [
@@ -26,13 +53,17 @@ export function getPlugins(
         uri: "w3://ens/ethereum.web3api.eth",
         //@ts-ignore
         plugin: ethereumPlugin({
+          //@ts-ignore
           networks: {
             testnet: {
               provider: ethereum,
             },
-            MAINNET: {
-              provider: "http://localhost:8546",
-            },
+/*             ropsten: {
+              //@ts-ignore
+              provider: ropstenUri,
+              signer: wallet,
+            }, */
+            ...customChains,
           },
           defaultNetwork: "testnet",
         }),
