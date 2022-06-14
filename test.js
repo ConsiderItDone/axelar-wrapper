@@ -14,7 +14,7 @@ const axelar = require('@axelar-network/axelar-local-dev');
   // Approve the AxelarGateway to use our aUSDC on chain1.
   await (await chain1.usdc.connect(user1).approve(chain1.gateway.address, 100)).wait();
   // And have it send it to chain2.
-  await (await chain1.gateway.connect(user1).sendToken(chain2.name, user2.address, 'aUSDC', 1)).wait();
+  await (await chain1.gateway.connect(user1).sendToken(chain2.name, user2.address, 'aUSDC', 100)).wait();
   // Have axelar relay the tranfer to chain2.
   await axelar.relay();
 

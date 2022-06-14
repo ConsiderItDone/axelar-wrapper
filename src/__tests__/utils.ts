@@ -3,16 +3,13 @@ import { ClientConfig } from "@web3api/client-js";
 import { ensPlugin } from "@web3api/ens-plugin-js";
 import { ethereumPlugin } from "@web3api/ethereum-plugin-js";
 import { ipfsPlugin } from "@web3api/ipfs-plugin-js";
-import { Wallet, ethers } from "ethers";
-
-/* import axios from "axios";
-import path from "path";
- */
+import { Wallet } from "ethers";
 
 interface ChainUser {
   chain: Network;
   user: Wallet;
 }
+
 export function getPlugins(
   ethereum: string,
   ipfs: string,
@@ -30,14 +27,6 @@ export function getPlugins(
     });
   }
 
-  const privateKey =
-    "8ca435f1321b8043d984d95776cf53f570f2e296f86a8b0c9ddbd7c537cee6a2";
-  const ropstenUri =
-    "https://ropsten.infura.io/v3/9aa3d95b3bc440fa88ea12eaa4456161";
-
-  const wallet = new Wallet(
-    privateKey,
-  );
   return {
     redirects: [],
     plugins: [
@@ -58,11 +47,6 @@ export function getPlugins(
             testnet: {
               provider: ethereum,
             },
-/*             ropsten: {
-              //@ts-ignore
-              provider: ropstenUri,
-              signer: wallet,
-            }, */
             ...customChains,
           },
           defaultNetwork: "testnet",
@@ -71,13 +55,3 @@ export function getPlugins(
     ],
   };
 }
-
-/* export async function getProviders(): Promise<TestEnvironment> {
-  const {
-    data: { ipfs, ethereum },
-  } = await axios.get("http://localhost:4040/providers");
-  const { data } = await axios.get("http://localhost:4040/deploy-ens");
-  const clientConfig = getPlugins(ethereum, ipfs, data.ensAddress);
-  return { ipfs, ethereum, ensAddress: data.ensAddress, clientConfig };
-}
- */

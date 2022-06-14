@@ -11,7 +11,6 @@
     "deploy": "npx w3 build --ipfs http://localhost:5001 --test-ens axelar.eth",
     "test": "yarn test:e2e && yarn test:env:up && yarn deploy && yarn test:recipe && yarn test:env:down",
     "test:e2e": "jest axelar-test-chains --passWithNoTests --runInBand --verbose",
-    "test:realnet": "jest evm-networks --passWithNoTests --runInBand --verbose",
     "test:axelar": "jest axelar-local --passWithNoTests --runInBand --verbose",
     "test:recipe": "npx w3 query ./recipes/e2e.json"
   },

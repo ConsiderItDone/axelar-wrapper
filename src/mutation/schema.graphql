@@ -6,14 +6,14 @@ type Mutation {
     destinationAddress: String!
     symbol: String!
     amount: BigInt!
-    spender: String!
-    contractAddress: String
+    tokenAddress: String!
+    gatewayAddress: String!
   ): Ethereum_TxReceipt!
 
   approve(
-    spender: String!
+    tokenAddress: String!
     amount: BigInt!
-    contractAddress: String
+    gatewayAddress: String!
   ): Ethereum_TxReceipt!
 
   sendToken(
@@ -21,7 +21,7 @@ type Mutation {
     destinationAddress: String!
     symbol: String!
     amount: BigInt!
-    contractAddress: String
+    gatewayAddress: String!
   ) : Ethereum_TxReceipt!
 }
 

@@ -73,15 +73,15 @@ describe("e2e", () => {
           destinationAddress: $destinationAddress
           symbol: $symbol
           amount: $amount
-          spender: $spender
-          contractAddress: $contractAddress
+          gatewayAddress: $gatewayAddress
+          tokenAddress: $tokenAddress
         )
       }`,
       variables: {
         destinationChain: chain2.name,
         destinationAddress: user2.address,
-        contractAddress: chain1.usdc.address,
-        spender: chain1.gateway.address,
+        tokenAddress: chain1.usdc.address,
+        gatewayAddress: chain1.gateway.address,
         symbol: "aUSDC",
         amount: amount.toString(),
       },
@@ -110,13 +110,23 @@ describe("e2e", () => {
     const balanceAfter1 = await chain1.usdc.balanceOf(user1.address);
     const balanceAfter2 = await chain2.usdc.balanceOf(user2.address);
 
+/*     while (true) {
+      const newBalance = await chain2.usdc.balanceOf(user2.address);
+      console.log(`user2 has ${newBalance} aUSDC AFTER.`);
+
+      if (BigInt(balanceBefore2) != BigInt(newBalance)) break;
+      await new Promise((r) => setTimeout(r, 5000));
+    } */
+
     const approveAndSendToken = result.data?.approveAndSendToken;
     expect(approveAndSendToken).toBeTruthy();
 
     console.log(`user1 has ${balanceAfter1} aUSDC AFTER.`);
     console.log(`user2 has ${balanceAfter2} aUSDC AFTER.`);
 
-    expect(balanceBefore1.toNumber() - amount.toNumber()).toEqual(balanceAfter1.toNumber());
+    expect(balanceBefore1.toNumber() - amount.toNumber()).toEqual(
+      balanceAfter1.toNumber()
+    );
     //expect(balanceBefore2.toNumber() + amount.toNumber()).toEqual(balanceAfter2.toNumber());
   });
 });
