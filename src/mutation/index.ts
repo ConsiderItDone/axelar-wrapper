@@ -4,6 +4,7 @@ import {
   Input_approve,
   requireEnv,
   Input_approveAndSendToken,
+  Ethereum_TxResponse,
   Ethereum_TxReceipt,
 } from "./w3";
 import { BigInt } from "@web3api/wasm-as";
@@ -79,4 +80,13 @@ export function approve(input: Input_approve): Ethereum_TxReceipt {
   }).unwrap();
 
   return res;
+}
+
+export function signMessage(
+  input: Input_signMessage
+): string {
+  return Ethereum_Mutation.signMessage({
+    message: input.message,
+    connection: input.connection
+  }).unwrap();
 }

@@ -2,6 +2,14 @@
 #import { Query, Request, Response } into HTTP from "w3://ens/http.web3api.eth"
 
 type Query {
+  getSignerAddress(
+    connection: String!
+  ): Ethereum_Connection!
+
+  getOneTimeCode(
+    signerAddress: String!
+  ): SignerAddress
+
   getDepositAddress(
     fromChain: String! # source chain
     toChain: String! # destination chain
@@ -13,4 +21,9 @@ type Query {
 
 type Options {
   _traceId: String!
+}
+
+type  SignerAddress {
+  validationMsg: String
+  otc: String
 }
