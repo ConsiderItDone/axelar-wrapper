@@ -81,12 +81,3 @@ export function approve(input: Input_approve): Ethereum_TxReceipt {
 
   return res;
 }
-
-export function signMessage(
-  input: Input_signMessage
-): string {
-  return Ethereum_Mutation.signMessage({
-    message: input.message,
-    connection: input.connection
-  }).unwrap();
-}
