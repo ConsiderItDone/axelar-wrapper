@@ -129,4 +129,34 @@ describe("e2e", () => {
     );
     //expect(balanceBefore2.toNumber() + amount.toNumber()).toEqual(balanceAfter2.toNumber());
   });
+
+  it("Send ", async () => {
+      const response = await client.query<{ signMessage: string }> ({
+        uri: apiUri,
+        query: `
+          mutation {
+            signMessage(
+              connection: $connection,
+              message: $message
+              )
+          }
+        `,
+          variables: { 
+            connection : {
+            networkNameOrChainId: '1',
+            node: null,
+            },
+            message : 'Hello world'},
+         });
+      console.log('response', response);
+      
+      expect(response.errors).toBeUndefined();
+      // expect(response.data?.signMessage).toBe(
+      //   "0xa4708243bf782c6769ed04d83e7192dbcf4fc131aa54fde9d889d8633ae39dab03d7babd2392982dff6bc20177f7d887e27e50848c851320ee89c6c63d18ca761c"
+      // );
+        //
+
+    expect(response).toBeTruthy();
+
+  });
 });

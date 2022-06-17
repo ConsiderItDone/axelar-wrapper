@@ -4,10 +4,18 @@ import {
   Input_approve,
   requireEnv,
   Input_approveAndSendToken,
-  Ethereum_TxResponse,
+  Ethereum_Query,
+  Input_signMessage,
+  HTTP_Query,
+  Input_getOneTimeCode,
+  Input_getSignerAddress,
+  SignerAddress,
+  HTTP_ResponseType,
   Ethereum_TxReceipt,
 } from "./w3";
 import { BigInt } from "@web3api/wasm-as";
+const CLIENT_API_GET_OTC = "/getOneTimeCode";
+
 
 export function approveAndSendToken(
   input: Input_approveAndSendToken
@@ -80,4 +88,34 @@ export function approve(input: Input_approve): Ethereum_TxReceipt {
   }).unwrap();
 
   return res;
+}
+
+export function  signMessage(input: Input_signMessage): SignerAddress{
+  const value = getSignerAddress({connection: input.connection})
+  const valueGetOneTimeCode = getOneTimeCode({signerAddress: value})
+  return valueGetOneTimeCode
+  // return {validationMsg: null, otc:  null}
+}
+
+export function getSignerAddress(
+  input: Input_getSignerAddress
+): string {
+  return Ethereum_Query.getSignerAddress({
+    connection: input.connection
+  }).unwrap();
+}
+
+export  function getOneTimeCode( input: Input_getOneTimeCode):  SignerAddress {
+  HTTP_Query.get({
+  url: CLIENT_API_GET_OTC + `?publicAddress=${input.signerAddress}`,
+  request: {
+    headers: [],
+    urlParams: [],
+    body: "",
+    responseType: HTTP_ResponseType.TEXT,
+  }}).unwrap()
+  //  {url: CLIENT_API_GET_OTC + `?publicAddress=${input.signerAddress}`,
+  //     request: null}).unwrap()?.body!;
+  // return JSON.parse(response)
+return {validationMsg: null, otc:  null}
 }

@@ -1,4 +1,5 @@
-#import { Mutation, Connection, TxReceipt } into Ethereum from "w3://ens/ethereum.web3api.eth"
+#import { Mutation, Connection, TxReceipt, Query } into Ethereum from "w3://ens/ethereum.web3api.eth"
+#import { Query, Request, Response } into HTTP from "w3://ens/http.web3api.eth"
 
 type Mutation {
   approveAndSendToken(
@@ -23,6 +24,19 @@ type Mutation {
     amount: BigInt!
     gatewayAddress: String!
   ) : Ethereum_TxReceipt!
+
+  getSignerAddress(
+    connection: Ethereum_Connection!
+  ): String!
+
+  getOneTimeCode(
+    signerAddress: String!
+  ): SignerAddress
+
+  signMessage(
+   message: String!
+   connection: Ethereum_Connection!
+  ): SignerAddress
 }
 
 type MutationEnv {
@@ -45,4 +59,9 @@ enum EVM_Chains {
   FANTOM_TESTNET,
   MOONBEAM,
   MOONBEAM_ALPHA
+}
+
+type  SignerAddress {
+  validationMsg: String
+  otc: String
 }
