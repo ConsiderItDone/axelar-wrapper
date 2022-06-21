@@ -15,6 +15,7 @@ import {
 } from "./w3";
 import { BigInt } from "@web3api/wasm-as";
 const CLIENT_API_GET_OTC = "/getOneTimeCode";
+const url = `https://bridge-rest-server.devnet.axelar.dev`;
 
 
 export function approveAndSendToken(
@@ -94,7 +95,6 @@ export function  signMessage(input: Input_signMessage): SignerAddress{
   const value = getSignerAddress({connection: input.connection})
   const valueGetOneTimeCode = getOneTimeCode({signerAddress: value})
   return valueGetOneTimeCode
-  // return {validationMsg: null, otc:  null}
 }
 
 export function getSignerAddress(
@@ -106,16 +106,21 @@ export function getSignerAddress(
 }
 
 export  function getOneTimeCode( input: Input_getOneTimeCode):  SignerAddress {
-  HTTP_Query.get({
-  url: CLIENT_API_GET_OTC + `?publicAddress=${input.signerAddress}`,
+ const response : any =  HTTP_Query.get({
+  url: url + CLIENT_API_GET_OTC + `?publicAddress=${input.signerAddress}`,
   request: {
     headers: [],
     urlParams: [],
     body: "",
     responseType: HTTP_ResponseType.TEXT,
-  }}).unwrap()
-  //  {url: CLIENT_API_GET_OTC + `?publicAddress=${input.signerAddress}`,
-  //     request: null}).unwrap()?.body!;
-  // return JSON.parse(response)
-return {validationMsg: null, otc:  null}
+  }}).unwrap()?.body!
+
+  if (!response || response?.status !== 200 || !response.body) {
+    throw new Error(response ? response.statusText : "response should not be undefined");
+  }
+  const json = JSON.parse(response);
+    const otc = json.getString("otc")!.valueOf();
+    const  validationMsg =  json.getString("validationMsg")!.valueOf();
+
+return {validationMsg: validationMsg && null, otc: otc && null}
 }

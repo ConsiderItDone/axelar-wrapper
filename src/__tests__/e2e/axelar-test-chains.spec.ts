@@ -4,10 +4,16 @@ import path from "path";
 import { getPlugins } from "../utils";
 import { Network } from "@axelar-network/axelar-local-dev/src/Network";
 const axelar = require("@axelar-network/axelar-local-dev");
+import nock from "nock";
 import BN from "bn.js";
 import { Wallet } from "ethers";
 
 jest.setTimeout(360000);
+
+const defaultReplyHeaders = {
+  'access-control-allow-origin': '*',
+  'access-control-allow-credentials': 'true'
+}
 
 describe("e2e", () => {
   let apiUri: string;
@@ -157,6 +163,28 @@ describe("e2e", () => {
         //
 
     expect(response).toBeTruthy();
+    nock("http://www.example.com", { reqheaders: { 'X-Request-Header': "req-foo" } })
+    .defaultReplyHeaders(defaultReplyHeaders)
+    .get("/api")
+    .query({ query: "foo" })
+    .reply(200, '{data: "test-response"}', { 'X-Response-Header': "resp-foo" })
 
+  const res = await client.query<{ get: Response }>({
+    uri: apiUri,
+    query: `query {
+      get(
+        url: "http://www.example.com/api"
+        request: {
+          responseType: TEXT
+          urlParams: [{key: "query", value: "foo"}]
+          headers: [{key: "X-Request-Header", value: "req-foo"}]
+        }
+      )
+    }`
+  });
+
+  expect(res.data).toBeDefined()
+  expect(res.errors).toBeUndefined()
+  expect(res.data?.get.status).toBe(200)
   });
 });
