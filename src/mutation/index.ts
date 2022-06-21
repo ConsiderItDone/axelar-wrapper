@@ -114,7 +114,7 @@ export  function getOneTimeCode( input: Input_getOneTimeCode):  SignerAddress {
     body: "",
     responseType: HTTP_ResponseType.TEXT,
   }}).unwrap()?.body!
-
+  
   if (!response || response?.status !== 200 || !response.body) {
     throw new Error(response ? response.statusText : "response should not be undefined");
   }

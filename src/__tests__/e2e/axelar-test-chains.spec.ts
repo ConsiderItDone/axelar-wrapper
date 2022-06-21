@@ -7,6 +7,9 @@ const axelar = require("@axelar-network/axelar-local-dev");
 import nock from "nock";
 import BN from "bn.js";
 import { Wallet } from "ethers";
+const wrapperPath = `${__dirname}/integration`
+const CLIENT_API_GET_OTC = "/getOneTimeCode";
+const url = `https://bridge-rest-server.devnet.axelar.dev`;
 
 jest.setTimeout(360000);
 
@@ -136,51 +139,69 @@ describe("e2e", () => {
     //expect(balanceBefore2.toNumber() + amount.toNumber()).toEqual(balanceAfter2.toNumber());
   });
 
-  it("Send ", async () => {
-      const response = await client.query<{ signMessage: string }> ({
-        uri: apiUri,
-        query: `
-          mutation {
-            signMessage(
-              connection: $connection,
-              message: $message
-              )
-          }
-        `,
-          variables: { 
-            connection : {
-            networkNameOrChainId: '1',
-            node: null,
-            },
-            message : 'Hello world'},
-         });
-      console.log('response', response);
-      
-      expect(response.errors).toBeUndefined();
-      // expect(response.data?.signMessage).toBe(
-      //   "0xa4708243bf782c6769ed04d83e7192dbcf4fc131aa54fde9d889d8633ae39dab03d7babd2392982dff6bc20177f7d887e27e50848c851320ee89c6c63d18ca761c"
-      // );
-        //
-
-    expect(response).toBeTruthy();
-    nock("http://www.example.com", { reqheaders: { 'X-Request-Header': "req-foo" } })
+  it("Sign message ", async () => {
+    // expect(response).toBeTruthy();
+    const resGetSignerAddress =  await client.query<{ getSignerAddress: string }> ({
+      uri: apiUri,
+      query: `
+        mutation {
+          signMessage(
+            connection: $connection,
+            message: $message
+            )
+        }
+      `,
+        variables: { 
+          connection : {
+          networkNameOrChainId: '1',
+          node: null,
+          },
+        }
+       });
+       
+    nock(url, { reqheaders: { 'X-Request-Header': "req-foo" } })
     .defaultReplyHeaders(defaultReplyHeaders)
-    .get("/api")
-    .query({ query: "foo" })
+    .get(`/${CLIENT_API_GET_OTC} + ?publicAddress=${resGetSignerAddress}`)
+    .query('Hello world')
     .reply(200, '{data: "test-response"}', { 'X-Response-Header': "resp-foo" })
 
+    const response = await client.query<{ signMessage: string }> ({
+      uri: apiUri,
+      query: `
+        mutation {
+          signMessage(
+            connection: $connection,
+            message: $message
+            )
+        }
+      `,
+        variables: { 
+          connection : {
+          networkNameOrChainId: '1',
+          node: null,
+          },
+          message : 'Hello world'},
+       });
+    console.log('response', response);
+    
+  expect(response.errors).toBeUndefined();
+
+     
   const res = await client.query<{ get: Response }>({
     uri: apiUri,
     query: `query {
       get(
-        url: "http://www.example.com/api"
+        url: $url
         request: {
           responseType: TEXT
           urlParams: [{key: "query", value: "foo"}]
           headers: [{key: "X-Request-Header", value: "req-foo"}]
         }
       )
-    }`
+    }`,
+    variables: {
+      url : url + CLIENT_API_GET_OTC + `?publicAddress=${resGetSignerAddress}`
+    }
   });
 
   expect(res.data).toBeDefined()
