@@ -98,20 +98,18 @@ export function getOneTimeCode(
   const config = Axelar_Query.getConfig({}).unwrap();
 
   const response = HTTP_Query.get({
-    url:
-      config.resourceUrl +
-      `/getOneTimeCode?publicAddress=${input.signerAddress}`,
+    url: config.resourceUrl + `/otc?publicAddress=${input.signerAddress}`,
     request: {
+      responseType: HTTP_ResponseType.TEXT,
       headers: [
-        { key: "Content-Type", value: "Content-Type" },
+        { key: "Content-Type", value: "application/json" },
         {
           key: "x-trace-id",
           value: input.traceId,
         },
       ],
-      urlParams: [],
-      body: "",
-      responseType: HTTP_ResponseType.TEXT,
+      urlParams: null, // [{key:'publicAddress', value:input.signerAddress}],
+      body: null,
     },
   }).unwrap();
 
