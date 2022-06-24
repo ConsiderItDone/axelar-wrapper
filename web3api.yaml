@@ -12,4 +12,4 @@ modules:
     module: ./src/query/index.ts
 import_redirects:
   - uri: w3://ens/axelar.web3api.eth
-    schema: ../axelar-plugin/build/schema.graphql
+    schema: ./node_modules/@cidt/axelar-polywrap-js/build/schema.graphql
