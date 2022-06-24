@@ -107,6 +107,10 @@ export function getOneTimeCode(
           key: "x-trace-id",
           value: input.traceId,
         },
+        {
+          key: "User-Agent",
+          value: "node-fetch/1.0 (+https://github.com/bitinn/node-fetch)",
+        },
       ],
       urlParams: null, // [{key:'publicAddress', value:input.signerAddress}],
       body: null,
