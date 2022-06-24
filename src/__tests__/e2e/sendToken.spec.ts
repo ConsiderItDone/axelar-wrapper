@@ -44,7 +44,7 @@ describe("e2e", () => {
     user1 = chain1.userWallets[0];
     user2 = chain2.userWallets[0];
 
-    await chain1.giveToken(user1.address, "aUSDC", BigInt(1230000));
+    await chain1.giveToken(user1.address, "aUSDC", BigInt("1000000000"));
 
     const config = getPlugins(ethereum, ipfs, ensAddress, [
       { chain: chain1, user: user1 },
@@ -63,7 +63,10 @@ describe("e2e", () => {
     console.log(`user1 has ${balanceBefore1} aUSDC BEFORE.`);
     console.log(`user2 has ${balanceBefore2} aUSDC BEFORE.`);
 
-    const amount = new BN("30000");
+    const amount = new BN("100000000");
+
+    console.log("Transfer Amount", amount.toString());
+
     const result = await client.query<{ approveAndSendToken: any }>({
       uri: apiUri,
       query: `
@@ -100,23 +103,14 @@ describe("e2e", () => {
     expect(result.data).toBeTruthy();
     expect(result.errors).toBeFalsy();
 
-    const res = result.data?.approveAndSendToken;
-    console.log("result", res);
+    const transferResult = result.data?.approveAndSendToken;
+
+    expect(transferResult).toBeTruthy();
 
     await axelar.relay();
 
-    //await new Promise((r) => setTimeout(r, 30000));
-
     const balanceAfter1 = await chain1.usdc.balanceOf(user1.address);
     const balanceAfter2 = await chain2.usdc.balanceOf(user2.address);
-
-/*     while (true) {
-      const newBalance = await chain2.usdc.balanceOf(user2.address);
-      console.log(`user2 has ${newBalance} aUSDC AFTER.`);
-
-      if (BigInt(balanceBefore2) != BigInt(newBalance)) break;
-      await new Promise((r) => setTimeout(r, 5000));
-    } */
 
     const approveAndSendToken = result.data?.approveAndSendToken;
     expect(approveAndSendToken).toBeTruthy();
@@ -127,6 +121,6 @@ describe("e2e", () => {
     expect(balanceBefore1.toNumber() - amount.toNumber()).toEqual(
       balanceAfter1.toNumber()
     );
-    //expect(balanceBefore2.toNumber() + amount.toNumber()).toEqual(balanceAfter2.toNumber());
+    expect(balanceBefore2).not.toEqual(balanceAfter2.toNumber());
   });
 });

@@ -24,7 +24,7 @@ type Query {
     publicAddress: String!
     signature: String!
     oneTimeCode: String!
-    traceId: String
+    traceId: String!
   ): String
 }
 
