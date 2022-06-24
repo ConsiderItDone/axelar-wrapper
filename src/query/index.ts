@@ -10,7 +10,7 @@ import {
 } from "./w3";
 import { JSON } from "@web3api/wasm-as";
 import { Ethereum_Mutation } from "../mutation/w3";
-import { toOtc, toRoomId } from "../utils/jsonmap";
+import { toDepositAddress, toOtc, toRoomId } from "../utils/jsonmap";
 import { Input_getInitRoomId } from "./w3/Query/serialization";
 import { OTCResponce } from "./w3/OTCResponce";
 
@@ -46,12 +46,13 @@ export function getDepositAddress(
       signature: signature,
       traceId: traceId,
     });
+
     if (roomId != null) {
       const depositAddress = Axelar_Query.getLinkEvent({
         roomId: roomId!,
       }).unwrap();
 
-      return depositAddress;
+      return toDepositAddress(JSON.parse(depositAddress));
     }
     return null;
   }
@@ -62,7 +63,8 @@ export function getInitRoomId(input: Input_getInitRoomId): string | null {
   const headers = getHeaders(
     input.publicAddress,
     input.signature,
-    input.oneTimeCode
+    input.oneTimeCode,
+    input.traceId
   );
 
   const payload = getParameters(
@@ -106,6 +108,10 @@ export function getOneTimeCode(
         {
           key: "x-trace-id",
           value: input.traceId,
+        },
+        {
+          key: "User-Agent",
+          value: "node-fetch/1.0 (+https://github.com/bitinn/node-fetch)",
         },
       ],
       urlParams: null, // [{key:'publicAddress', value:input.signerAddress}],

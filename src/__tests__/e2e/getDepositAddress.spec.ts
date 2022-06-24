@@ -38,7 +38,7 @@ describe("e2e", () => {
   it("Get deposit address", async () => {
     const destinationAddress = "0xF16DfB26e1FEc993E085092563ECFAEaDa7eD7fD";
 
-    const result = await client.query<{ approveAndSendToken: any }>({
+    const result = await client.query<{ getDepositAddress: any }>({
       uri: apiUri,
       query: `
       query {
@@ -58,8 +58,12 @@ describe("e2e", () => {
         options: null,
       },
     });
-    console.log(result);
     expect(result.data).toBeTruthy();
     expect(result.errors).toBeFalsy();
+
+    const depositAddress = result.data?.getDepositAddress;
+    console.log("depositAddress", depositAddress);
+    expect(depositAddress).toBeTruthy();
+    expect(typeof depositAddress).toBe("string");
   });
 });

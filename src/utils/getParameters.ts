@@ -1,14 +1,5 @@
 import { JSON } from "@web3api/wasm-as";
 
-export class AssetTransferObject {
-  fromChain: string;
-  toChain: string;
-  destinationAddress: string;
-  asset: string;
-  publicAddress: string;
-  signature: string;
-}
-
 export function getParameters(
   sourceChainName: string, // = "terra",
   destinationChainName: string, // = "avalanche",
@@ -17,14 +8,13 @@ export function getParameters(
   publicAddress: string,
   signature: string
 ): string {
-  const transferObj: AssetTransferObject = {
-    fromChain: sourceChainName,
-    toChain: destinationChainName,
-    destinationAddress: destinationAddress,
-    asset: asset_common_key,
-    publicAddress: publicAddress,
-    signature: signature,
-  };
+  const payload = JSON.Value.Object();
+  payload.set("fromChain", sourceChainName);
+  payload.set("toChain", destinationChainName);
+  payload.set("destinationAddress", destinationAddress);
+  payload.set("asset", asset_common_key);
+  payload.set("publicAddress", publicAddress);
+  payload.set("signature", signature);
 
-  return JSON.from(transferObj).stringify();
+  return payload.stringify();
 }

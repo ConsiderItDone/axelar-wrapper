@@ -11,5 +11,15 @@ export function toOtc(input: JSON.Value): OTCResponce {
 
 export function toRoomId(input: JSON.Value): string {
   const json = <JSON.Obj>input;
-  return json.getString("roomId")!.valueOf();
+  const roomIdValue = json.getObj("data")!.getString("roomId");
+  if (roomIdValue != null) {
+    return roomIdValue.valueOf();
+  }
+  return json.stringify();
+}
+
+export function toDepositAddress(input: JSON.Value): string {
+  const json = <JSON.Obj>input;
+  const depositAddress = json.getString("depositAddress")!.valueOf();
+  return depositAddress;
 }

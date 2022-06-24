@@ -17,7 +17,7 @@
   },
   "devDependencies": {
     "@axelar-network/axelar-local-dev": "^1.0.0",
-    "@cidt/axelar-polywrap-js": "^0.0.1",
+    "@cidt/axelar-polywrap-js": "^0.0.3",
     "@types/bn.js": "^5.1.0",
     "@types/jest": "27.0.3",
     "@types/node": "16.11.11",
