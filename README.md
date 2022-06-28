@@ -12,6 +12,15 @@ A "wrapper" consists of the following files:
 The wrapper is written in AssemblyScript, it has a robust test suite and performs arbitrary precision arithmetic. The wrapper business logic will be deployed on a decentralized endpoint, like IPFS.
 
 
+### This wrapper gives you the following functionality: 
+Transfer tokens cross-chain : 
+
+  There are two ways to transfer tokens cross-chain with Axelar:
+  
+ • Wrapper that perform approve and sendToken methods.
+ • GetDepositAddress methods.
+ 
+
 ## How To Run
 
 ### Install Dependencies
@@ -24,13 +33,8 @@ The wrapper is written in AssemblyScript, it has a robust test suite and perform
 ### Test
 `yarn test` 
 
-### This wrapper gives you the following functionality: 
-Transfer tokens cross-chain : 
-
-  There are two ways to transfer tokens cross-chain with Axelar:
-  
- • Wrapper that perform approve and sendToken methods.
- • GetDepositAddress methods.
+### How to use
+[Link to Polywrap client usage documentation](https://docs.polywrap.io/reference/clients/js/client-js)
 
 
 ### SendToken method (Example): 
