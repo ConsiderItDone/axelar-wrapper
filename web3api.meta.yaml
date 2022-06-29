@@ -1,11 +1,9 @@
 format: 0.0.1-prealpha.3
-displayName: Simple Storage
-subtext: simple storage subtext
-description: simple storage description
+displayName: Axelar
+subtext: Axelar subtext
+description: Axelar description
 tags:
-  - simple-storage
-  - storage
-  - ethereum
+  - axelar
 repository: https://github.com/test/test
 icon: ./meta/icon.png
 links:
