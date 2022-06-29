@@ -12,6 +12,15 @@ A "wrapper" consists of the following files:
 The wrapper is written in AssemblyScript, it has a robust test suite and performs arbitrary precision arithmetic. The wrapper business logic will be deployed on a decentralized endpoint, like IPFS.
 
 
+### This wrapper gives you the following functionality: 
+Transfer tokens cross-chain : 
+
+  There are two ways to transfer tokens cross-chain with Axelar:
+  
+ • Wrapper that perform approve and sendToken methods.
+ • GetDepositAddress methods.
+ 
+
 ## How To Run
 
 ### Install Dependencies
@@ -24,29 +33,81 @@ The wrapper is written in AssemblyScript, it has a robust test suite and perform
 ### Test
 `yarn test` 
 
-### This wrapper gives you the following functionality: 
-Transfer tokens cross-chain : 
-
-  There are two ways to transfer tokens cross-chain with Axelar:
-  
- • Wrapper that perform approve and sendToken methods.
- • GetDepositAddress methods.
+### How to use
+[Link to Polywrap client usage documentation](https://docs.polywrap.io/reference/clients/js/client-js)
 
 
-### SendToken method: 
+### SendToken method (Example): 
+   
+```typescript
+const sourceChain = {
+  name: "chain1",
+  chainId: "Id of chain",
+  tokenAddress: "Token address",
+  gatewayAddress: "Address of gateway contract on source chain"
+};
 
- • Wrapper that perform approve and sendToken methods.
- • End-to-end test which spin up Axelar test environment using GitHub - axelarnetwork/axelar-local-dev:
-   A local developer environment for building your cross-chain dapps,
-   create 2 EVM networks and transfer ERC20 between it
+const destinationChain = {...};
 
-### GetDepositAddress: 
-  • Wrapper perform HTTP POST call to /transferAssets endpoint and get address
-  • Integration test using nock library
-  • End-to-end test using Axelar Tesnet Endpoint
+const receiverAddress = "0xdsSADFs...";
+const amount = new BN(100000);
 
-### SignMessage:
+ const txReceipt = client.query<{ approveAndSendToken: any }>({
+      uri: apiUri,
+      query: `
+      mutation {
+        approveAndSendToken(
+          destinationChain: $destinationChain
+          destinationAddress: $destinationAddress
+          symbol: $symbol
+          amount: $amount
+          gatewayAddress: $gatewayAddress
+          tokenAddress: $tokenAddress
+        )
+      }`,
+      variables: {
+        destinationChain: destinationChain.name,
+        destinationAddress: receiverAddress,
+        tokenAddress: sourceChain.tokenAddress,
+        gatewayAddress: sourceChain.gatewayAddress,
+        symbol: "aUSDC",
+        amount: amount.toString(),
+      },
+      config: {
+        envs: [
+          {
+            common: {
+              chainId: sourceChain.chainId,
+            },
+          },
+        ],
+      },
+    });
+   ```
 
-  • Wrapper performs HTTP GET call to /getOneTimeCode endpoint of Axelar backend and get One Time Code and Validation Message.
-  • Wrapper calls Ethereum Provider signMessage using Ethereum Plugin
-  • Integration test using nock library and Ethereum Plugin
+### GetDepositAddress method (Example):
+
+```typescript
+const destinationAddress = "0xabc..."
+
+const depositAddress = await client.query<{ getDepositAddress: any }>({
+      uri: apiUri,
+      query: `
+      query {
+        getDepositAddress(
+          fromChain: $fromChain
+          toChain: $toChain
+          destinationAddress: $destinationAddress
+          asset: $asset
+          options: $options
+        )
+      }`,
+      variables: {
+        fromChain: "Terra",
+        toChain: "Avalanche",
+        destinationAddress: destinationAddress,
+        asset: "uusd",
+        options: null,
+      },
+    });
+```
