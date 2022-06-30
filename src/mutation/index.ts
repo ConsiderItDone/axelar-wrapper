@@ -2,19 +2,24 @@ import {
   Ethereum_Mutation,
   Input_sendToken,
   Input_approve,
-  requireEnv,
   Input_approveAndSendToken,
   Ethereum_TxReceipt,
+  Ethereum_TxOverrides,
 } from "./w3";
-import { BigInt } from "@web3api/wasm-as";
-
 export function approveAndSendToken(
   input: Input_approveAndSendToken
 ): Ethereum_TxReceipt {
+  const txOverrides: Ethereum_TxOverrides =
+    input.txOverrides === null
+      ? { gasLimit: null, gasPrice: null, value: null }
+      : input.txOverrides!;
+
   const approved = approve({
     amount: input.amount,
     tokenAddress: input.tokenAddress,
     gatewayAddress: input.gatewayAddress,
+    connection: input.connection,
+    txOverrides: txOverrides,
   });
 
   if (!approved) {
@@ -27,13 +32,12 @@ export function approveAndSendToken(
     symbol: input.symbol,
     amount: input.amount,
     gatewayAddress: input.gatewayAddress,
+    connection: input.connection,
+    txOverrides: txOverrides,
   });
 }
 
 export function sendToken(input: Input_sendToken): Ethereum_TxReceipt {
-  const env = requireEnv();
-  const chainId = env.chainId;
-
   const res = Ethereum_Mutation.callContractMethodAndWait({
     address: input.gatewayAddress, // gateway address
     method:
@@ -44,38 +48,20 @@ export function sendToken(input: Input_sendToken): Ethereum_TxReceipt {
       input.symbol,
       input.amount.toString(),
     ],
-    connection: {
-      networkNameOrChainId: chainId.toString(),
-      node: null,
-    },
-    txOverrides: {
-      gasLimit: BigInt.fromString("100000"),
-      gasPrice: null,
-      value: null,
-    },
+    connection: input.connection,
+    txOverrides: input.txOverrides,
   }).unwrap();
 
   return res;
 }
 
 export function approve(input: Input_approve): Ethereum_TxReceipt {
-  const env = requireEnv();
-  const chainId = env.chainId;
-
-
   const res = Ethereum_Mutation.callContractMethodAndWait({
     address: input.tokenAddress, //tokenAddress
     method: "function approve(address spender, uint256 amount)",
     args: [input.gatewayAddress, input.amount.toString()], // spender = gateway address
-    connection: {
-      networkNameOrChainId: chainId.toString(),
-      node: null,
-    },
-    txOverrides: {
-      gasLimit: BigInt.fromString("100000"),
-      gasPrice: null,
-      value: null,
-    },
+    connection: input.connection,
+    txOverrides: input.txOverrides,
   }).unwrap();
 
   return res;
