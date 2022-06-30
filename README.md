@@ -10,9 +10,6 @@ Transfer tokens cross-chain :
 There are two ways to transfer tokens cross-chain with Axelar:
   * Wrapper that perform approve and sendToken methods.
   * GetDepositAddress methods.
- 
-### Example
-[Demo application](https://github.com/ConsiderItDone/axelar-demo-app)
 
 ## How To Run
 
@@ -28,6 +25,10 @@ There are two ways to transfer tokens cross-chain with Axelar:
 
 ### How to use
 [Link to Polywrap client usage documentation](https://docs.polywrap.io/reference/clients/js/client-js)
+
+
+### Example Application
+[React Demo application](https://github.com/ConsiderItDone/axelar-demo-app)
 
 ### Setup polywrap client:
 `config.ts`
