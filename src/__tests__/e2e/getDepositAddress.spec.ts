@@ -54,7 +54,7 @@ describe("e2e", () => {
         fromChain: "Terra",
         toChain: "Avalanche",
         destinationAddress: destinationAddress,
-        asset: "uusd",
+        asset: "uausdc",
         options: null,
       },
     });

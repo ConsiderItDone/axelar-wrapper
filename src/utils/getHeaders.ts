@@ -17,20 +17,8 @@ export function getHeaders(
       value: traceId,
     },
     {
-      key: "publicAddress",
-      value: publicAddr,
-    },
-    {
       key: "User-Agent",
       value: "node-fetch/1.0 (+https://github.com/bitinn/node-fetch)",
-    },
-    {
-      key: "signature",
-      value: signature,
-    },
-    {
-      key: "otc",
-      value: otc,
     },
   ];
 }
