@@ -67,6 +67,15 @@ describe("e2e", () => {
 
     console.log("Transfer Amount", amount.toString());
 
+    const variables = {
+      destinationChain: chain2.name,
+      destinationAddress: user2.address,
+      tokenAddress: chain1.usdc.address,
+      gatewayAddress: chain1.gateway.address,
+      symbol: "aUSDC",
+      amount: amount.toString(),
+    };
+    console.log("variables", variables);
     const result = await client.query<{ approveAndSendToken: any }>({
       uri: apiUri,
       query: `
@@ -80,14 +89,7 @@ describe("e2e", () => {
           tokenAddress: $tokenAddress
         )
       }`,
-      variables: {
-        destinationChain: chain2.name,
-        destinationAddress: user2.address,
-        tokenAddress: chain1.usdc.address,
-        gatewayAddress: chain1.gateway.address,
-        symbol: "aUSDC",
-        amount: amount.toString(),
-      },
+      variables: variables,
       config: {
         envs: [
           {
