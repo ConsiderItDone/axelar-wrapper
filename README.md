@@ -1,25 +1,18 @@
 # Axelar Wrapper
 
 ## This wrapper provides secure integration with Axelar Network
-
-A "wrapper" consists of the following files:
-
-• Query and mutation wasm modules containing the protocol's business logic functions
-• GraphQL schema to provide types and parameters for the query and mutation functions
-• Manifest files that orchestrate the wrapper
-
-
 The wrapper is written in AssemblyScript, it has a robust test suite and performs arbitrary precision arithmetic. The wrapper business logic will be deployed on a decentralized endpoint, like IPFS.
 
 
 ### This wrapper gives you the following functionality: 
 Transfer tokens cross-chain : 
 
-  There are two ways to transfer tokens cross-chain with Axelar:
-  
- • Wrapper that perform approve and sendToken methods.
- • GetDepositAddress methods.
+There are two ways to transfer tokens cross-chain with Axelar:
+  * Wrapper that perform approve and sendToken methods.
+  * GetDepositAddress methods.
  
+### Example
+[Demo application](https://github.com/ConsiderItDone/axelar-demo-app)
 
 ## How To Run
 
@@ -36,6 +29,50 @@ Transfer tokens cross-chain :
 ### How to use
 [Link to Polywrap client usage documentation](https://docs.polywrap.io/reference/clients/js/client-js)
 
+### Setup polywrap client:
+`config.ts`
+```typescript
+import { Web3ApiProvider } from "@web3api/react";
+import { ethereumPlugin } from "@web3api/ethereum-plugin-js";
+
+export const getEthereumPluginConfig = (
+  chainId: string,
+  provider: any,
+  account: string
+): ConnectionConfigs => {
+  return {
+    [chainId]: {
+      provider: provider,
+      signer: account,
+    },
+  };
+};
+
+export const plugins = [
+    {
+      uri: "w3://ens/ethereum.web3api.eth",
+      plugin: ethereumPlugin({
+        networks: getEthereumPluginConfig(chainId, provider, account), 
+        defaultNetwork: chainId,
+      }),
+    },
+    { // Plugin is necessary to use 'getDepositAddress' method
+      uri: "w3://ens/axelar.web3api.eth",
+      plugin: axelarPlugin({ environment: "testnet" }),
+    },
+  ]
+```
+Mount Web3ApiProvider
+```typescript
+import { Web3ApiProvider } from "@web3api/react";
+import {plugins} from "./config";
+
+return (
+<Web3ApiProvider plugins={plugins}>
+  <App />
+</Web3ApiProvider>
+);
+```
 
 ### SendToken method (Example): 
    
