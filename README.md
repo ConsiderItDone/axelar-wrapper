@@ -63,6 +63,7 @@ const amount = new BN(100000);
           amount: $amount
           gatewayAddress: $gatewayAddress
           tokenAddress: $tokenAddress
+          txOverrides: $txOverrides
         )
       }`,
       variables: {
@@ -72,6 +73,7 @@ const amount = new BN(100000);
         gatewayAddress: sourceChain.gatewayAddress,
         symbol: "aUSDC",
         amount: amount.toString(),
+        txOverrides: { gasLimit: "1000000", gasPrice: null, value: null } // You probably need to point gasLimit manually for transaction. leave null for default 100000
       },
       config: {
         envs: [

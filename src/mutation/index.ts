@@ -5,20 +5,30 @@ import {
   Input_approveAndSendToken,
   Ethereum_TxReceipt,
   Ethereum_TxOverrides,
+  Ethereum_Connection,
+  requireEnv,
 } from "./w3";
 export function approveAndSendToken(
   input: Input_approveAndSendToken
 ): Ethereum_TxReceipt {
   const txOverrides: Ethereum_TxOverrides =
-    input.txOverrides === null
-      ? { gasLimit: null, gasPrice: null, value: null }
-      : input.txOverrides!;
+    input.txOverrides != null
+      ? input.txOverrides!
+      : { gasLimit: null, gasPrice: null, value: null };
+
+  const connection: Ethereum_Connection =
+    input.connection != null
+      ? input.connection!
+      : {
+          networkNameOrChainId: requireEnv().chainId.toString(),
+          node: null,
+        };
 
   const approved = approve({
     amount: input.amount,
     tokenAddress: input.tokenAddress,
     gatewayAddress: input.gatewayAddress,
-    connection: input.connection,
+    connection: connection,
     txOverrides: txOverrides,
   });
 
