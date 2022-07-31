@@ -1,0 +1,67 @@
+#import { Module, Connection, TxReceipt, TxOverrides } into Ethereum from "wrap://ens/ethereum.polywrap.eth"
+#import { Module, Request, Response } into HTTP from "wrap://ens/http.polywrap.eth"
+#import { Module } into Axelar from "wrap://ens/axelar.polywrap.eth"
+
+type Module {
+  getDepositAddress(
+    fromChain: String! # source chain
+    toChain: String! # destination chain
+    destinationAddress: String! # destination address to transfer the token to
+    asset: String! # common key of the asset
+    options: Options
+  ): String
+
+  getOneTimeCode(
+    signerAddress: String!
+    traceId: String!
+  ): OTCResponce
+
+  getInitRoomId(
+    fromChain: String!
+    toChain: String!
+    destinationAddress: String!
+    asset: String!
+    publicAddress: String!
+    signature: String!
+    oneTimeCode: String!
+    traceId: String!
+  ): String
+
+  approveAndSendToken(
+    destinationChain: String!
+    destinationAddress: String!
+    symbol: String!
+    amount: BigInt!
+    tokenAddress: String!
+    gatewayAddress: String!
+    connection: Ethereum_Connection
+    txOverrides: Ethereum_TxOverrides
+  ): Ethereum_TxReceipt!
+
+  approve(
+    tokenAddress: String!
+    amount: BigInt!
+    gatewayAddress: String!
+    connection: Ethereum_Connection
+    txOverrides: Ethereum_TxOverrides
+  ): Ethereum_TxReceipt!
+
+  sendToken(
+    destinationChain: String!
+    destinationAddress: String!
+    symbol: String!
+    amount: BigInt!
+    gatewayAddress: String!
+    connection: Ethereum_Connection
+    txOverrides: Ethereum_TxOverrides
+  ) : Ethereum_TxReceipt!
+}
+
+type Options {
+  _traceId: String!
+}
+
+type OTCResponce {
+  otc: String!
+  validationMsg: String!
+}

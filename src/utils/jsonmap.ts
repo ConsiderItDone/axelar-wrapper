@@ -1,5 +1,5 @@
-import { JSON } from "@web3api/wasm-as";
-import { OTCResponce } from "../query/w3/OTCResponce";
+import { JSON } from "@polywrap/wasm-as";
+import { OTCResponce } from "../wrap/OTCResponce";
 
 export function toOtc(input: JSON.Value): OTCResponce {
   const json = <JSON.Obj>input;

@@ -1,4 +1,4 @@
-import { JSON } from "@web3api/wasm-as";
+import { JSON } from "@polywrap/wasm-as";
 
 export function getParameters(
   sourceChainName: string, // = "terra",
