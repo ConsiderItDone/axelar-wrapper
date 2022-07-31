@@ -1,4 +1,4 @@
-#import { Mutation, Connection, TxReceipt } into Ethereum from "w3://ens/ethereum.web3api.eth"
+#import { Mutation, Connection, TxReceipt, TxOverrides } into Ethereum from "w3://ens/ethereum.web3api.eth"
 
 type Mutation {
   approveAndSendToken(
@@ -8,12 +8,16 @@ type Mutation {
     amount: BigInt!
     tokenAddress: String!
     gatewayAddress: String!
+    connection: Ethereum_Connection
+    txOverrides: Ethereum_TxOverrides
   ): Ethereum_TxReceipt!
 
   approve(
     tokenAddress: String!
     amount: BigInt!
     gatewayAddress: String!
+    connection: Ethereum_Connection
+    txOverrides: Ethereum_TxOverrides
   ): Ethereum_TxReceipt!
 
   sendToken(
@@ -22,6 +26,8 @@ type Mutation {
     symbol: String!
     amount: BigInt!
     gatewayAddress: String!
+    connection: Ethereum_Connection
+    txOverrides: Ethereum_TxOverrides
   ) : Ethereum_TxReceipt!
 }
 
