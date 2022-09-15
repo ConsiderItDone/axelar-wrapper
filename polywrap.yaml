@@ -1,0 +1,11 @@
+format: 0.1.0
+name: axelar-wrapper
+meta: ./polywrap.meta.yaml
+build: ./polywrap.build.yaml
+deploy: ./polywrap.deploy.yaml
+language: wasm/assemblyscript
+module: ./src/index.ts
+schema: ./src/schema.graphql
+import_redirects:
+  - uri: wrap://ens/axelar.polywrap.eth
+    schema: ../axelar-plugin/build/schema.graphql

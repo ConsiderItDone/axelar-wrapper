@@ -1,12 +1,6 @@
-import { HTTP_Header } from "../query/w3";
-//import uuid from "as-uuid";
+import { HTTP_Header } from "../wrap";
 
-export function getHeaders(
-  publicAddr: string,
-  signature: string,
-  otc: string,
-  traceId: string
-): HTTP_Header[] {
+export function getHeaders(traceId: string): HTTP_Header[] {
   return [
     {
       key: "Content-Type",
